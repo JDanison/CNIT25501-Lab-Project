@@ -1,17 +1,25 @@
-// Main application
+/* Main Application */
 public class EmbeddedAlarmSystem {
     public static void main(String[] args) {
         Sensor temperatureSensor = new Sensor("Temperature", 75.0);
         Sensor pressureSensor = new Sensor("Pressure", 30.0);
 
-        AlarmSystem alarmSystem = new AlarmSystem();
-        temperatureSensor.addListener(alarmSystem);
-        pressureSensor.addListener(alarmSystem);
+        // Use the AdvancedAlarmSystem for both to see all alert levels
+        SensorEventListener advancedAlarmSystem = new AdvancedAlarmSystem();
 
-        // Simulating sensor data
-        temperatureSensor.generateData(72.5);
-        temperatureSensor.generateData(76.3);
-        pressureSensor.generateData(28.7);
-        pressureSensor.generateData(30.5);
+        temperatureSensor.addListener(advancedAlarmSystem);
+        pressureSensor.addListener(advancedAlarmSystem);
+
+        // Simulating sensor data to trigger all levels
+        temperatureSensor.generateData(75.3);  // NO ALERT
+        temperatureSensor.generateData(77.3);  // MILD ALERT
+        temperatureSensor.generateData(81.0);  // WARNING
+        temperatureSensor.generateData(88.0);  // CRITICAL ALERT
+
+        pressureSensor.generateData(30.1);      // NO ALERT
+        pressureSensor.generateData(32.5);     // MILD ALERT
+        pressureSensor.generateData(36.2);     // WARNING
+        pressureSensor.generateData(42.5);     // CRITICAL ALERT
     }
 }
+

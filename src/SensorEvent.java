@@ -1,11 +1,12 @@
-// Event class to represent sensor events
-class SensorEvent {
-    private final String type;
-    private final double value;
+public class SensorEvent {
+    private String type;
+    private double value;
+    private double threshold;
 
-    public SensorEvent(String type, double value) {
+    public SensorEvent(String type, double value, double threshold) {
         this.type = type;
         this.value = value;
+        this.threshold = threshold;
     }
 
     public String getType() {
@@ -15,5 +16,8 @@ class SensorEvent {
     public double getValue() {
         return value;
     }
-}
 
+    public double getThreshold() {
+        return threshold;
+    }
+}
