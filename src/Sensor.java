@@ -25,4 +25,18 @@ public class Sensor {
             }
         }
     }
+
+    /* Generate Random Data every 1 second */
+    public void startGeneratingData() {
+        javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
+            double baseVariation = (Math.random() * 4) - 2; // ±2 range
+            // 15% chance for moderate variation
+            if (Math.random() < 0.15) {
+                baseVariation += Math.random() * 4 - 2; // Additional ±2
+            }
+            double randomValue = threshold + baseVariation;
+            generateData(randomValue);
+        });
+        timer.start();
+    }
 }
