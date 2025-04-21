@@ -35,13 +35,19 @@ public class SensorGUI extends JFrame implements SensorEventListener {
         // Top panel - Table and filters
         JPanel topPanel = new JPanel(new BorderLayout());
 
-        // Filter panel
+        // Filter panel with Create Sensor button
         JPanel filterPanel = new JPanel(new BorderLayout());
-        searchField = new JTextField();
-        sensorFilterCombo = new JComboBox<>(new String[]{"All", "Temperature", "Pressure"});
-        filterPanel.add(new JLabel(" Search: "), BorderLayout.WEST);
-        filterPanel.add(searchField, BorderLayout.CENTER);
-        filterPanel.add(sensorFilterCombo, BorderLayout.EAST);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel(" Search: "));
+        searchField = new JTextField(20);
+        searchPanel.add(searchField);
+        sensorFilterCombo = new JComboBox<>(new String[]{"All"}); // Initialize with "All"
+        searchPanel.add(sensorFilterCombo);
+
+        JButton createSensorButton = new JButton("Create Sensor");
+        createSensorButton.addActionListener(e -> createSensor());
+        filterPanel.add(searchPanel, BorderLayout.CENTER);
+        filterPanel.add(createSensorButton, BorderLayout.EAST);
 
         // Sensor table
         tableModel = new DefaultTableModel(new Object[]{"Sensor", "Value", "Status"}, 0);
@@ -49,7 +55,6 @@ public class SensorGUI extends JFrame implements SensorEventListener {
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(tableModel);
         sensorTable.setRowSorter(sorter);
         sensorTable.setDefaultRenderer(Object.class, new StatusCellRenderer());
-        sensorTable.setDefaultRenderer(Double.class, new ValueCellRenderer());
         JScrollPane tableScroll = new JScrollPane(sensorTable);
 
         topPanel.add(filterPanel, BorderLayout.NORTH);
@@ -89,6 +94,37 @@ public class SensorGUI extends JFrame implements SensorEventListener {
         sensorFilterCombo.addActionListener(e -> updateFilter());
     }
 
+    private void createSensor() {
+        SensorCreationDialog sensorDialog = new SensorCreationDialog();
+        sensorDialog.setVisible(true);
+        if (sensorDialog.isConfirmed()) {
+            String sensorType = sensorDialog.getSensorType();
+
+            // Add sensor type to combo box if not exists
+            DefaultComboBoxModel<String> model = (DefaultComboBoxModel<String>) sensorFilterCombo.getModel();
+            boolean exists = false;
+            for (int i = 0; i < model.getSize(); i++) {
+                if (model.getElementAt(i).equals(sensorType)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                model.addElement(sensorType);
+            }
+
+            // Create and add sensor
+            Sensor sensor = new Sensor(
+                    sensorType,
+                    sensorDialog.getThreshold(),
+                    sensorDialog.getUnit()
+            );
+            sensor.addListener(new AdvancedAlarmSystem());
+            sensor.addListener(this);
+            sensor.startGeneratingData();
+        }
+    }
+
     private void setupLogArea(JTextArea area) {
         area.setEditable(false);
         area.setFont(new Font("Monospaced", Font.PLAIN, 12));
@@ -98,14 +134,11 @@ public class SensorGUI extends JFrame implements SensorEventListener {
         String searchText = searchField.getText();
         String selectedSensor = (String) sensorFilterCombo.getSelectedItem();
 
-        // Update table filter
         RowFilter<DefaultTableModel, Integer> rf = RowFilter.andFilter(Arrays.asList(
                 RowFilter.regexFilter("(?i)" + searchText, 0),
                 RowFilter.regexFilter(selectedSensor.equals("All") ? ".*" : selectedSensor, 0)
         ));
         ((TableRowSorter<DefaultTableModel>) sensorTable.getRowSorter()).setRowFilter(rf);
-
-        // Update logs
         updateLogDisplays();
     }
 
@@ -128,10 +161,10 @@ public class SensorGUI extends JFrame implements SensorEventListener {
             message = "MILD ALERT: " + event.getType() + " is slightly " + direction + " threshold. Deviation: " + String.format("%.2f", absDeviation);
         } else {
             status = "NORMAL";
-            message = "Normal reading: " + event.getType() + " at " + String.format("%.2f", event.getValue()) + " (" + direction + " threshold)";
+            message = "Normal reading: " + event.getType() + " at " + String.format("%.2f", event.getValue()) + " " + event.getUnit() + " (" + direction + " threshold)";
         }
 
-        // Update table
+        // Update table (value already includes unit)
         SwingUtilities.invokeLater(() -> {
             boolean found = false;
             for (int i = 0; i < tableModel.getRowCount(); i++) {
@@ -151,7 +184,7 @@ public class SensorGUI extends JFrame implements SensorEventListener {
             }
         });
 
-        // Create log entry
+        // Log entry
         String timestamp = new SimpleDateFormat("HH:mm:ss").format(new Date());
         LogEntry entry = new LogEntry(timestamp, event.getType(), status, message);
 

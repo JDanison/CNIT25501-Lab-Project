@@ -9,21 +9,25 @@ public class SensorCreationDialog extends JDialog {
 
     public SensorCreationDialog() {
         setTitle("New Sensor");
-        setSize(300, 200);
+        setSize(1200, 800); // Adjusted size
         setModal(true);
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        add(new JLabel("Type (e.g., Temperature):"));
+        JPanel panel = new JPanel(new GridLayout(4, 2, 10, 10));
+        panel.setPreferredSize(new Dimension(400, 200));
+
+        panel.add(new JLabel("Type (e.g., Temperature):"));
         typeField = new JTextField();
-        add(typeField);
+        panel.add(typeField);
 
-        add(new JLabel("Threshold:"));
+        panel.add(new JLabel("Threshold:"));
         thresholdField = new JTextField();
-        add(thresholdField);
+        panel.add(thresholdField);
 
-        add(new JLabel("Unit (e.g., °C):"));
+        panel.add(new JLabel("Unit (e.g., °C):"));
         unitField = new JTextField();
-        add(unitField);
+        panel.add(unitField);
 
         JButton createButton = new JButton("Create");
         createButton.addActionListener(e -> {
@@ -35,14 +39,18 @@ public class SensorCreationDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Invalid threshold value", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
-        add(createButton);
+        panel.add(createButton);
 
         JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(e -> System.exit(0));
-        add(cancelButton);
+        cancelButton.addActionListener(e -> dispose());
+        panel.add(cancelButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(panel, gbc);
+        setLocationRelativeTo(null);
     }
 
-    // Renamed method to avoid conflict
     public String getSensorType() {
         return typeField.getText();
     }

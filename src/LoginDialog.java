@@ -8,25 +8,34 @@ public class LoginDialog extends JDialog {
 
     public LoginDialog() {
         setTitle("Login");
-        setSize(300, 150);
+        setSize(1200, 800); // Adjusted size
         setModal(true);
-        setLayout(new GridLayout(3, 2));
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
-        add(new JLabel("Username:"));
+        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+        panel.setPreferredSize(new Dimension(400, 150));
+
+        panel.add(new JLabel("Username:"));
         usernameField = new JTextField();
-        add(usernameField);
+        panel.add(usernameField);
 
-        add(new JLabel("Password:"));
+        panel.add(new JLabel("Password:"));
         passwordField = new JPasswordField();
-        add(passwordField);
+        panel.add(passwordField);
 
         JButton loginButton = new JButton("Login");
         loginButton.addActionListener(e -> checkLogin());
-        add(loginButton);
+        panel.add(loginButton);
 
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(e -> System.exit(0));
-        add(cancelButton);
+        panel.add(cancelButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        add(panel, gbc);
+        setLocationRelativeTo(null);
     }
 
     private void checkLogin() {
