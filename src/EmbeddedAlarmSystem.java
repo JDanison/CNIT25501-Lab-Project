@@ -1,25 +1,27 @@
-/* Main Application */
 public class EmbeddedAlarmSystem {
     public static void main(String[] args) {
-        Sensor temperatureSensor = new Sensor("Temperature", 75.0);
-        Sensor pressureSensor = new Sensor("Pressure", 30.0);
+        // Show login dialog
+        LoginDialog loginDialog = new LoginDialog();
+        loginDialog.setVisible(true);
+        if (!loginDialog.isLoggedIn()) {
+            System.exit(0);
+        }
 
-        // Create GUI first
+        // Show sensor creation dialog
+        SensorCreationDialog sensorDialog = new SensorCreationDialog();
+        sensorDialog.setVisible(true);
+        if (!sensorDialog.isConfirmed()) {
+            System.exit(0);
+        }
+
+        // Create GUI
         SensorGUI gui = new SensorGUI();
         gui.setVisible(true);
 
-        // Register listeners
-        SensorEventListener advancedAlarmSystem = new AdvancedAlarmSystem();
-
-        // Add both alarm system and GUI as listeners
-        temperatureSensor.addListener(advancedAlarmSystem);
-        temperatureSensor.addListener(gui);
-
-        pressureSensor.addListener(advancedAlarmSystem);
-        pressureSensor.addListener(gui);
-
-        // Start data generation
-        temperatureSensor.startGeneratingData();
-        pressureSensor.startGeneratingData();
+        // Create sensor based on user input
+        Sensor sensor = new Sensor(sensorDialog.getSensorType(), sensorDialog.getThreshold(), sensorDialog.getUnit());        SensorEventListener alarmSystem = new AdvancedAlarmSystem();
+        sensor.addListener(alarmSystem);
+        sensor.addListener(gui);
+        sensor.startGeneratingData();
     }
 }

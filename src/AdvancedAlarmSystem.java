@@ -5,13 +5,14 @@ public class AdvancedAlarmSystem extends AlarmSystem {
         double absDeviation = Math.abs(deviation);
         String formattedDeviation = String.format("%.2f", absDeviation);
         String direction = deviation > 0 ? "above" : "below";
+        String unit = event.getUnit();
 
         if (absDeviation > 10) {
-            System.out.println("CRITICAL ALERT! " + event.getType() + " is " + direction + " threshold by " + formattedDeviation);
+            System.out.println("CRITICAL ALERT! " + event.getType() + " is " + direction + " threshold by " + formattedDeviation + " " + unit);
         } else if (absDeviation > 5) {
-            System.out.println("WARNING! " + event.getType() + " is moderately " + direction + " threshold. Deviation: " + formattedDeviation);
+            System.out.println("WARNING! " + event.getType() + " is moderately " + direction + " threshold. Deviation: " + formattedDeviation + " " + unit);
         } else if (absDeviation > 2) {
-            System.out.println("MILD ALERT: " + event.getType() + " is slightly " + direction + " threshold. Deviation: " + formattedDeviation);
+            System.out.println("MILD ALERT: " + event.getType() + " is slightly " + direction + " threshold. Deviation: " + formattedDeviation + " " + unit);
         }
     }
 }

@@ -136,7 +136,7 @@ public class SensorGUI extends JFrame implements SensorEventListener {
             boolean found = false;
             for (int i = 0; i < tableModel.getRowCount(); i++) {
                 if (tableModel.getValueAt(i, 0).equals(event.getType())) {
-                    tableModel.setValueAt(String.format("%.2f", event.getValue()), i, 1);
+                    tableModel.setValueAt(String.format("%.2f %s", event.getValue(), event.getUnit()), i, 1);
                     tableModel.setValueAt(status, i, 2);
                     found = true;
                     break;
@@ -145,7 +145,7 @@ public class SensorGUI extends JFrame implements SensorEventListener {
             if (!found) {
                 tableModel.addRow(new Object[]{
                         event.getType(),
-                        String.format("%.2f", event.getValue()),
+                        String.format("%.2f %s", event.getValue(), event.getUnit()),
                         status
                 });
             }

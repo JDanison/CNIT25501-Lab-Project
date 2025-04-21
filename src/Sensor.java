@@ -4,7 +4,14 @@ import java.util.List;
 public class Sensor {
     private String type;
     private double threshold;
-    private List<SensorEventListener> listeners;
+    private String unit;
+    private List<SensorEventListener> listeners = new ArrayList<>();
+
+    public Sensor(String type, double threshold, String unit) {
+        this.type = type;
+        this.threshold = threshold;
+        this.unit = unit;
+    }
 
     public Sensor(String type, double threshold) {
         this.type = type;
@@ -17,12 +24,10 @@ public class Sensor {
     }
 
     public void generateData(double value) {
-        System.out.println("[Sensor] " + type + " reported value: " + value);
-        if (value > threshold || value < threshold) {
-            SensorEvent event = new SensorEvent(type, value, threshold);
-            for (SensorEventListener listener : listeners) {
-                listener.onSensorEvent(event);
-            }
+        System.out.println("[Sensor] " + type + " reported value: " + value + " " + unit);
+        SensorEvent event = new SensorEvent(type, value, threshold, unit);
+        for (SensorEventListener listener : listeners) {
+            listener.onSensorEvent(event);
         }
     }
 
