@@ -34,11 +34,20 @@ public class Sensor {
     /* Generate Random Data every 1 second */
     public void startGeneratingData() {
         javax.swing.Timer timer = new javax.swing.Timer(1000, e -> {
-            double baseVariation = (Math.random() * 4) - 2; // ±2 range
-            // 15% chance for moderate variation
-            if (Math.random() < 0.15) {
-                baseVariation += Math.random() * 4 - 2; // Additional ±2
+            double baseVariation;
+
+            double chance = Math.random();
+            if (chance < 0.85) {
+                // 85% chance: small variation ±1
+                baseVariation = (Math.random() * 2) - 1;
+            } else if (chance < 0.95) {
+                // 10% chance: moderate variation ±5
+                baseVariation = (Math.random() * 10) - 5;
+            } else {
+                // 5% chance: large variation ±11
+                baseVariation = (Math.random() * 22) - 11;
             }
+
             double randomValue = threshold + baseVariation;
             generateData(randomValue);
         });

@@ -232,8 +232,7 @@ public class SensorGUI extends JFrame implements SensorEventListener {
 
     private static class StatusCellRenderer extends DefaultTableCellRenderer {
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             String status = (String) table.getModel().getValueAt(row, 2);
             switch (status) {
@@ -243,17 +242,6 @@ public class SensorGUI extends JFrame implements SensorEventListener {
                 default: c.setBackground(Color.GREEN);
             }
             return c;
-        }
-    }
-
-    private static class ValueCellRenderer extends DefaultTableCellRenderer {
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                                                       boolean isSelected, boolean hasFocus, int row, int column) {
-            if (value instanceof Double) {
-                value = String.format("%.2f", (Double) value);
-            }
-            return super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         }
     }
 }
